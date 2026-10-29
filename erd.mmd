@@ -1,0 +1,126 @@
+erDiagram
+    Publishers |o--o{ Books : publishes
+    Categories |o--o{ Books : classifies
+    Books ||--o{ BookAuthors : "written by"
+    Authors ||--o{ BookAuthors : writes
+    Books ||--o{ BookCopies : "has copies"
+    Books ||--o{ Reservations : "reserved as"
+    Members ||--o{ Memberships : holds
+    Members ||--o{ Loans : borrows
+    Members ||--o{ Reservations : places
+    BookCopies ||--o{ Loans : "lent in"
+    Loans ||--o{ Fines : incurs
+    Staff |o--o{ Loans : "checks out (CheckedOutBy)"
+    Staff |o--o{ Loans : "receives return (ReturnedTo)"
+
+    Publishers {
+        INTEGER PublisherID PK
+        TEXT PublisherName
+        TEXT City
+        TEXT State
+        TEXT Country
+        TEXT Website
+    }
+    Categories {
+        INTEGER CategoryID PK
+        TEXT CategoryName UK
+        TEXT Description
+    }
+    Authors {
+        INTEGER AuthorID PK
+        TEXT FirstName
+        TEXT LastName
+        INTEGER BirthYear
+        INTEGER DeathYear
+        TEXT Nationality
+    }
+    Books {
+        INTEGER BookID PK
+        TEXT ISBN UK
+        TEXT Title
+        INTEGER PublicationYear
+        INTEGER PublisherID FK
+        INTEGER CategoryID FK
+        TEXT Edition
+        TEXT Language
+        INTEGER PageCount
+        TEXT DateAdded
+    }
+    BookAuthors {
+        INTEGER BookID PK, FK
+        INTEGER AuthorID PK, FK
+        INTEGER AuthorOrder
+    }
+    BookCopies {
+        INTEGER CopyID PK
+        INTEGER BookID FK
+        TEXT Barcode UK
+        TEXT AcquisitionDate
+        TEXT Condition
+        TEXT ShelfLocation
+        NUMERIC ReplacementCost
+        TEXT CopyStatus
+    }
+    Staff {
+        INTEGER StaffID PK
+        TEXT FirstName
+        TEXT LastName
+        TEXT Email
+        TEXT JobTitle
+        TEXT HireDate
+        TEXT StaffStatus
+    }
+    Members {
+        INTEGER MemberID PK
+        TEXT FirstName
+        TEXT LastName
+        TEXT Email
+        TEXT Phone
+        TEXT StreetAddress
+        TEXT City
+        TEXT State
+        TEXT PostalCode
+        TEXT DateRegistered
+        TEXT MemberStatus
+    }
+    Memberships {
+        INTEGER MembershipID PK
+        INTEGER MemberID FK
+        TEXT MembershipType
+        TEXT StartDate
+        TEXT ExpirationDate
+        TEXT MembershipStatus
+        NUMERIC FeePaid
+        TEXT PaymentDate
+    }
+    Loans {
+        INTEGER LoanID PK
+        INTEGER CopyID FK
+        INTEGER MemberID FK
+        TEXT CheckoutDate
+        TEXT DueDate
+        TEXT ReturnDate
+        INTEGER RenewalCount
+        TEXT LoanStatus
+        INTEGER CheckedOutBy FK
+        INTEGER ReturnedTo FK
+    }
+    Fines {
+        INTEGER FineID PK
+        INTEGER LoanID FK
+        TEXT FineType
+        TEXT FineDate
+        NUMERIC AmountAssessed
+        NUMERIC AmountPaid
+        TEXT PaymentStatus
+        TEXT PaymentDate
+    }
+    Reservations {
+        INTEGER ReservationID PK
+        INTEGER MemberID FK
+        INTEGER BookID FK
+        TEXT ReservationDate
+        TEXT ExpirationDate
+        TEXT ReservationStatus
+        TEXT NotificationDate
+    }
