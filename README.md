@@ -6,7 +6,7 @@ This is my Module 2 assignment for MSAI-5523.
 
 | File | Purpose |
 |---|---|
-| `schema.sql` | Creates the 12 tables, foreign keys, CHECK constraints, indexes and triggers |
+| `schema.sql` | Creates the 12 tables, foreign keys, CHECK constraints, indexes, triggers and views |
 | `seed.sql` | Sample data (currently the 10 book categories) |
 | `load_books.py` | Loads a random, reproducible sample of `books.csv` into Books, Authors and BookAuthors (`python load_books.py [count] [--seed N]`; default 300 books, seed 42) |
 | `library.db` | The SQLite database built from the scripts above (currently 300 books, 408 authors) |
@@ -39,3 +39,15 @@ BookCopies, Memberships, Loans, Fines, Reservations.
   - Triggers block a new loan when the copy is On Loan, Lost, Damaged or In
     Repair. They also keep `BookCopies.CopyStatus` up to date: On Loan at
     checkout, Available on return, Lost when a loan is marked Lost.
+
+### Views
+- **`vw_CurrentOverdueLoans`**: every loan that is overdue today, with the
+  member's name, the copy's barcode, the book's title, the due date and
+  `DaysOverdue`. A loan counts as overdue when it hasn't been returned
+  (`ReturnDate IS NULL`) and its `DueDate` is before today. This is
+  recalculated on every query instead of trusting the stored `LoanStatus`.
+  Loans marked Lost are left out.
+
+  ```
+  SELECT * FROM vw_CurrentOverdueLoans ORDER BY DaysOverdue DESC;
+  ```

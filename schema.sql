@@ -300,3 +300,32 @@ WHEN NEW.LoanStatus = 'Lost' AND OLD.LoanStatus <> 'Lost'
 BEGIN
     UPDATE BookCopies SET CopyStatus = 'Lost' WHERE CopyID = NEW.CopyID;
 END;
+
+-- ---------------------------------------------------------------------------
+-- Views
+-- ---------------------------------------------------------------------------
+
+-- Loans that are overdue right now: not yet returned and due before today.
+-- Computed from the dates each time it's queried, so it never goes stale the
+-- way a stored LoanStatus = 'Overdue' would. Loans marked Lost are excluded;
+-- they're handled as lost books (and Lost Book fines), not overdue ones.
+CREATE VIEW IF NOT EXISTS vw_CurrentOverdueLoans AS
+SELECT
+    l.LoanID,
+    l.MemberID,
+    m.FirstName AS MemberFirstName,
+    m.LastName  AS MemberLastName,
+    l.CopyID,
+    c.Barcode,
+    c.BookID,
+    b.Title,
+    l.CheckoutDate,
+    l.DueDate,
+    CAST(julianday(date('now', 'localtime')) - julianday(l.DueDate) AS INTEGER) AS DaysOverdue
+FROM Loans l
+JOIN Members    m ON m.MemberID = l.MemberID
+JOIN BookCopies c ON c.CopyID   = l.CopyID
+JOIN Books      b ON b.BookID   = c.BookID
+WHERE l.ReturnDate IS NULL
+  AND l.LoanStatus <> 'Lost'
+  AND l.DueDate < date('now', 'localtime');
