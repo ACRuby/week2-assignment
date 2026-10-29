@@ -10,10 +10,11 @@ This is my Module 2 assignment for MSAI-5523.
 | `seed.sql` | Sample data (currently the 10 book categories) |
 | `load_books.py` | Loads a random, reproducible sample of `books.csv` into Books, Authors and BookAuthors (`python load_books.py [count] [--seed N]`; default 300 books, seed 42) |
 | `sample_data.py` | Fills the remaining tables with made-up sample data: publishers, staff, members, memberships, copies, loans, fines and reservations (`python sample_data.py [--seed N]`; default seed 2026). Runs once; does nothing if members, staff, copies or loans already exist |
+| `link_books.py` | Gives each book a made-up publisher and category (title/author keywords, else random; `python link_books.py [--seed N]`). Only fills books that don't have them yet |
 | `library.db` | The SQLite database built from the scripts above |
 | `books.csv` | [goodbooks-10k](https://github.com/zygmuntz/goodbooks-10k) book list (10,000 titles) |
 
-Build or update the database (all four are safe to re-run; they never
+Build or update the database (all five are safe to re-run; they never
 drop or overwrite existing tables or rows):
 
 ```
@@ -21,6 +22,7 @@ sqlite3 library.db < schema.sql
 sqlite3 library.db < seed.sql
 python load_books.py
 python sample_data.py
+python link_books.py
 ```
 
 Tables: Categories, Publishers, Authors, Staff, Members, Books, BookAuthors,
@@ -58,9 +60,9 @@ BookCopies, Memberships, Loans, Fines, Reservations.
 | Table | Rows | Notes |
 |---|---|---|
 | Categories | 10 | From `seed.sql` |
-| Books | 300 | Random sample of goodbooks-10k (seed 42); publisher and category left blank |
+| Books | 300 | Random sample of goodbooks-10k (seed 42); publisher and category made up by `link_books.py` |
 | Authors / BookAuthors | 408 / 442 | From the same books |
-| Publishers | 10 | Real publishing companies, not linked to books |
+| Publishers | 10 | Real publishing companies, randomly assigned to books (not who actually published them) |
 | Staff | 6 | 5 Active, 1 Inactive |
 | Members | 40 | 30 Active, 4 Expired, 3 Inactive, 3 Suspended |
 | Memberships | 93 | Yearly periods, including past renewals |
