@@ -8,15 +8,17 @@ This is my Module 2 assignment for MSAI-5523.
 |---|---|
 | `schema.sql` | Creates the 12 tables, foreign keys, CHECK constraints, indexes and triggers |
 | `seed.sql` | Sample data (currently the 10 book categories) |
-| `library.db` | The SQLite database built from the two scripts above |
+| `load_books.py` | Loads a random, reproducible sample of `books.csv` into Books, Authors and BookAuthors (`python load_books.py [count] [--seed N]`; default 300 books, seed 42) |
+| `library.db` | The SQLite database built from the scripts above (currently 300 books, 408 authors) |
 | `books.csv` | [goodbooks-10k](https://github.com/zygmuntz/goodbooks-10k) book list (10,000 titles) |
 
-Build or update the database (both scripts are safe to re-run; they never
+Build or update the database (all three are safe to re-run; they never
 drop or overwrite existing tables or rows):
 
 ```
 sqlite3 library.db < schema.sql
 sqlite3 library.db < seed.sql
+python load_books.py
 ```
 
 Tables: Categories, Publishers, Authors, Staff, Members, Books, BookAuthors,
